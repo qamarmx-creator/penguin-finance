@@ -29,7 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "baseUrl": "/"
+      "baseUrl": "/penguin-finance/"
     },
     "plugins": [
       process.env.EXPO_PUBLIC_BACKEND_BASE_URL ? [
