@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
-  Image, Alert, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard,
+  Image, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Category } from '@/types/finance';
@@ -48,11 +49,11 @@ export default function HomeScreen() {
   const handleSubmit = useCallback(async () => {
     const numAmount = parseFloat(amount);
     if (!numAmount || numAmount <= 0) {
-      Alert.alert('提示', '请输入有效金额');
+      Toast.show({ type: 'error', text1: '请输入有效金额' });
       return;
     }
     if (!categoryId) {
-      Alert.alert('提示', '请选择分类');
+      Toast.show({ type: 'error', text1: '请选择分类' });
       return;
     }
     setSubmitting(true);
@@ -70,9 +71,9 @@ export default function HomeScreen() {
       setNote('');
       setImageUri(null);
       setDate(new Date());
-      Alert.alert('成功', '记录已保存');
+      Toast.show({ type: 'success', text1: '记录已保存' });
     } catch (e) {
-      Alert.alert('错误', '保存失败，请重试');
+      Toast.show({ type: 'error', text1: '保存失败，请重试' });
     } finally {
       setSubmitting(false);
     }
@@ -255,12 +256,13 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
     if (!newName.trim()) return;
     await addCategory({ name: newName.trim(), type: newType, icon: 'tag', isCustom: true });
     setNewName('');
+    Toast.show({ type: 'success', text1: '分类已添加' });
   };
 
   const handleDelete = (id: string) => {
     const cat = categories.find(c => c.id === id);
     if (cat && !cat.isCustom) {
-      Alert.alert('提示', '预设分类不可删除');
+      Toast.show({ type: 'info', text1: '预设分类不可删除' });
       return;
     }
     Alert.alert('确认', '确定删除该分类？', [

@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
-  View, Text, Pressable, StyleSheet, ScrollView, Alert, Platform,
+  View, Text, Pressable, StyleSheet, ScrollView, Platform,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { LineChart, PieChart } from 'react-native-gifted-charts';
 import * as XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import dayjs from 'dayjs';
@@ -88,7 +89,7 @@ export default function StatsScreen() {
       .sort((a, b) => a.date.localeCompare(b.date));
 
     if (monthTx.length === 0) {
-      Alert.alert('提示', '当月暂无记录可导出');
+      Toast.show({ type: 'info', text1: '当月暂无记录可导出' });
       return;
     }
 
@@ -109,7 +110,7 @@ export default function StatsScreen() {
 
     if (Platform.OS === 'web') {
       XLSX.writeFile(wb, `记账记录_${selectedMonth}.xlsx`);
-      Alert.alert('成功', '文件已开始下载');
+      Toast.show({ type: 'success', text1: '文件已开始下载' });
     } else {
       // Mobile: write to file and share
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
@@ -118,7 +119,7 @@ export default function StatsScreen() {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(fileUri);
       } else {
-        Alert.alert('提示', '当前设备不支持文件分享');
+        Toast.show({ type: 'info', text1: '当前设备不支持文件分享' });
       }
     }
   }, [transactions, categories, selectedMonth]);
@@ -171,27 +172,29 @@ export default function StatsScreen() {
             {lineChartData.some(d => d.value > 0) ? (
               <LineChart
                 data={lineChartData}
-                height={180}
-                width={300}
-                spacing={4}
+                height={200}
+                spacing={10}
                 hideRules
                 hideYAxisText
                 yAxisColor="#ECECEC"
                 xAxisColor="#ECECEC"
                 color="#111"
                 thickness={1.5}
-                textColor="#888"
-                textFontSize={9}
+                textColor="#AAA"
+                textFontSize={8}
                 startFillColor="#111"
                 startOpacity={0.05}
                 endFillColor="#111"
                 endOpacity={0}
-                initialSpacing={8}
+                initialSpacing={10}
                 yAxisThickness={0}
                 xAxisThickness={StyleSheet.hairlineWidth}
                 noOfSections={3}
                 maxValue={maxExpense * 1.2}
                 adjustToWidth
+                xAxisLabelTexts={lineChartData
+                  .map((d, i) => (i % 5 === 0 || i === lineChartData.length - 1) ? d.label : '')
+                }
               />
             ) : (
               <View style={styles.emptyChart}>

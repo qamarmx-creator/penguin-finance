@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
-  View, Text, Pressable, StyleSheet, FlatList, Image, Alert,
+  View, Text, Pressable, StyleSheet, FlatList, Image,
   Modal, TextInput, ScrollView, KeyboardAvoidingView, Platform,
-  TouchableWithoutFeedback, Keyboard,
+  TouchableWithoutFeedback, Keyboard, Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Transaction, type Category } from '@/types/finance';
@@ -225,7 +226,7 @@ function EditTransactionModal({
   const handleSave = async () => {
     const numAmount = parseFloat(amount);
     if (!numAmount || numAmount <= 0) {
-      Alert.alert('提示', '请输入有效金额');
+      Toast.show({ type: 'error', text1: '请输入有效金额' });
       return;
     }
     await onSave({
@@ -236,6 +237,7 @@ function EditTransactionModal({
       note: note.trim(),
       imageBase64: imageUri ?? undefined,
     });
+    Toast.show({ type: 'success', text1: '修改已保存' });
   };
 
   return (
