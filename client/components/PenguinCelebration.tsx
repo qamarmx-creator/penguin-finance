@@ -43,9 +43,9 @@ export const CATEGORY_PENGUIN_MAP: Record<string, number> = {
   exp_food: 7,        // slide_belly - happy eating
   exp_transport: 8,   // thumbs_up - on the go
   exp_shopping: 9,    // hold_heart - love shopping
-  exp_fun: 13,        // music_headphone - entertainment
+  exp_fun: 14,        // diary_book - entertainment
   exp_medical: 6,     // sad_cry - medical bills hurt
-  exp_edu: 14,        // diary_book - studying
+  exp_edu: 13,        // music_headphone - studying
   exp_home: 16,       // calendar - monthly rent
   exp_comm: 15,       // camera_photo - communication
   exp_other: 5,       // shy_peek - miscellaneous
