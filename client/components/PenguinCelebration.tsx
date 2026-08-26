@@ -40,17 +40,20 @@ export const SEARCH_PENGUIN = penguin03;
 // Category-to-penguin mapping for deterministic icon assignment
 export const CATEGORY_PENGUIN_MAP: Record<string, number> = {
   // Expense categories
-  expense_food: 7,        // slide_belly - happy eating
-  expense_transport: 8,   // thumbs_up - on the go
-  expense_shopping: 9,    // hold_heart - love shopping
-  expense_entertainment: 13, // music_headphone - entertainment
-  expense_medical: 6,     // sad_cry - medical bills hurt
-  expense_education: 14,  // diary_book - studying
-  expense_housing: 16,    // calendar - monthly rent
-  expense_other: 5,       // shy_peek - miscellaneous
+  exp_food: 7,        // slide_belly - happy eating
+  exp_transport: 8,   // thumbs_up - on the go
+  exp_shopping: 9,    // hold_heart - love shopping
+  exp_fun: 13,        // music_headphone - entertainment
+  exp_medical: 6,     // sad_cry - medical bills hurt
+  exp_edu: 14,        // diary_book - studying
+  exp_home: 16,       // calendar - monthly rent
+  exp_comm: 15,       // camera_photo - communication
+  exp_other: 5,       // shy_peek - miscellaneous
   // Income categories
-  income_salary: 10,      // jump_joy - got paid!
-  income_other: 17,       // favorite_heart - other income
+  inc_salary: 10,     // jump_joy - got paid!
+  inc_parttime: 11,   // notification_bell - part-time work
+  inc_invest: 12,     // tasks_checklist - investment tracking
+  inc_other: 17,      // favorite_heart - other income
 };
 
 // Celebration messages based on context
