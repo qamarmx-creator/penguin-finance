@@ -1,0 +1,23 @@
+{
+  "buildCommand": "cd client && npx expo export --platform web && cp web/manifest.json dist/manifest.json && cp web/sw.js dist/sw.js && mkdir -p dist/assets/images && cp assets/images/icon.png dist/assets/images/icon.png && cp assets/images/favicon.png dist/assets/images/favicon.png",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && npm install",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
+      "source": "/manifest.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" }
+      ]
+    }
+  ]
+}

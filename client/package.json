@@ -9,6 +9,7 @@
     "install-missing": "node ./scripts/install-missing-deps.js",
     "lint": "tsc --noEmit; eslint ./ -f ./scripts/formatter.mjs --quiet",
     "start": "expo start --web --clear",
+    "build:pwa": "npx expo export --platform web && cp web/manifest.json dist/manifest.json && cp web/sw.js dist/sw.js && mkdir -p dist/assets/images && cp assets/images/icon.png dist/assets/images/icon.png && cp assets/images/favicon.png dist/assets/images/favicon.png",
     "test": "jest --watchAll"
   },
   "jest": {
