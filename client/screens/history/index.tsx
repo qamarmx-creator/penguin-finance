@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Transaction, type Category } from '@/types/finance';
-import { EmptyPenguin, PenguinIcon } from '@/components/PenguinCelebration';
+import { EmptyPenguin, PenguinIcon, CategoryPenguinIcon } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 export default function HistoryScreen() {
@@ -156,7 +156,7 @@ export default function HistoryScreen() {
                   onPress={() => openEdit(tx)}
                 >
                   <View style={styles.txIconWrap}>
-                    <Feather name={getCategoryIcon(tx.categoryId) as any} size={16} color="#D4A5B0" />
+                    <CategoryPenguinIcon categoryId={tx.categoryId} size={24} />
                   </View>
                   <View style={styles.txInfo}>
                     <Text style={styles.txCategory}>{getCategoryName(tx.categoryId)}</Text>
@@ -289,7 +289,7 @@ function EditTransactionModal({
                       style={[eStyles.catItem, categoryId === cat.id && eStyles.catItemActive]}
                       onPress={() => setCategoryId(cat.id)}
                     >
-                      <Feather name={cat.icon as any} size={14} color={categoryId === cat.id ? '#FFF' : '#9A8A8F'} />
+                      <CategoryPenguinIcon categoryId={cat.id} size={18} />
                       <Text style={[eStyles.catName, categoryId === cat.id && eStyles.catNameActive]}>{cat.name}</Text>
                     </Pressable>
                   ))}

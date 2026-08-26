@@ -11,7 +11,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Category } from '@/types/finance';
-import { PenguinCelebration, PenguinIcon } from '@/components/PenguinCelebration';
+import { PenguinCelebration, PenguinIcon, CategoryPenguinIcon } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 /** Cute penguin emojis for different states */
@@ -162,11 +162,7 @@ export default function HomeScreen() {
                     onPress={() => setCategoryId(cat.id)}
                   >
                     <View style={[styles.categoryIconWrap, categoryId === cat.id && styles.categoryIconWrapActive]}>
-                      <Feather
-                        name={cat.icon as any}
-                        size={18}
-                        color={categoryId === cat.id ? '#FFF' : '#9A8A8F'}
-                      />
+                      <CategoryPenguinIcon categoryId={cat.id} size={28} />
                     </View>
                     <Text style={[styles.categoryName, categoryId === cat.id && styles.categoryNameActive]}>
                       {cat.name}
@@ -298,7 +294,7 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
       <Text style={styles.modalCatTitle}>{title}</Text>
       {cats.map(cat => (
         <View key={cat.id} style={styles.modalCatItem}>
-          <Feather name={cat.icon as any} size={16} color="#9A8A8F" />
+          <CategoryPenguinIcon categoryId={cat.id} size={20} />
           <Text style={styles.modalCatName}>{cat.name}</Text>
           {cat.isCustom && (
             <Pressable onPress={() => handleDelete(cat.id)} style={styles.modalCatDelete}>
