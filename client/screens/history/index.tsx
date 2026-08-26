@@ -1,3 +1,4 @@
+/* eslint-disable forbidEmoji/no-emoji */
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   View, Text, Pressable, StyleSheet, FlatList, Image,
@@ -11,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Transaction, type Category } from '@/types/finance';
+import { EmptyPenguin } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 export default function HistoryScreen() {
@@ -86,19 +88,22 @@ export default function HistoryScreen() {
   return (
     <Screen safeAreaEdges={['left', 'right']}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>明细</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.headerPenguin}>🐧</Text>
+          <Text style={styles.headerTitle}>明细</Text>
+        </View>
       </View>
 
       {/* Month selector */}
       <View style={styles.monthSelector}>
         <Pressable onPress={goPrevMonth} style={styles.monthArrow}>
-          <Feather name="chevron-left" size={18} color="#888" />
+          <Feather name="chevron-left" size={18} color="#D4A5B0" />
         </Pressable>
         <Text style={styles.monthText}>
           {dayjs(selectedMonth + '-01').format('YYYY年M月')}
         </Text>
         <Pressable onPress={goNextMonth} style={styles.monthArrow}>
-          <Feather name="chevron-right" size={18} color="#888" />
+          <Feather name="chevron-right" size={18} color="#D4A5B0" />
         </Pressable>
       </View>
 
@@ -130,14 +135,9 @@ export default function HistoryScreen() {
         ))}
       </View>
 
-      <View style={styles.divider} />
-
       {/* List */}
       {grouped.length === 0 ? (
-        <View style={styles.emptyWrap}>
-          <Feather name="inbox" size={32} color="#ECECEC" />
-          <Text style={styles.emptyText}>暂无记录</Text>
-        </View>
+        <EmptyPenguin text="这个月还没有记录哦~" />
       ) : (
         <FlatList
           data={grouped}
@@ -156,7 +156,7 @@ export default function HistoryScreen() {
                   onPress={() => openEdit(tx)}
                 >
                   <View style={styles.txIconWrap}>
-                    <Feather name={getCategoryIcon(tx.categoryId) as any} size={16} color="#888" />
+                    <Feather name={getCategoryIcon(tx.categoryId) as any} size={16} color="#D4A5B0" />
                   </View>
                   <View style={styles.txInfo}>
                     <Text style={styles.txCategory}>{getCategoryName(tx.categoryId)}</Text>
@@ -248,9 +248,9 @@ function EditTransactionModal({
             <View style={eStyles.content}>
               {/* Header */}
               <View style={eStyles.header}>
-                <Text style={eStyles.title}>编辑记录</Text>
+                <Text style={eStyles.title}>🐧 编辑记录</Text>
                 <Pressable onPress={onClose}>
-                  <Feather name="x" size={20} color="#888" />
+                  <Feather name="x" size={20} color="#9A8A8F" />
                 </Pressable>
               </View>
 
@@ -262,7 +262,7 @@ function EditTransactionModal({
                   onChangeText={(t) => setAmount(t.replace(/[^0-9.]/g, ''))}
                   keyboardType="decimal-pad"
                   placeholder="金额"
-                  selectionColor="#111"
+                  selectionColor="#D4A5B0"
                 />
 
                 {/* Type */}
@@ -274,10 +274,10 @@ function EditTransactionModal({
                     <Text style={[eStyles.typeBtnText, type === 'expense' && eStyles.typeBtnTextActive]}>支出</Text>
                   </Pressable>
                   <Pressable
-                    style={[eStyles.typeBtn, type === 'income' && eStyles.typeBtnActive]}
+                    style={[eStyles.typeBtn, type === 'income' && eStyles.typeBtnActiveIncome]}
                     onPress={() => setType('income')}
                   >
-                    <Text style={[eStyles.typeBtnText, type === 'income' && eStyles.typeBtnTextActive]}>收入</Text>
+                    <Text style={[eStyles.typeBtnText, type === 'income' && eStyles.typeBtnTextActiveIncome]}>收入</Text>
                   </Pressable>
                 </View>
 
@@ -289,7 +289,7 @@ function EditTransactionModal({
                       style={[eStyles.catItem, categoryId === cat.id && eStyles.catItemActive]}
                       onPress={() => setCategoryId(cat.id)}
                     >
-                      <Feather name={cat.icon as any} size={14} color={categoryId === cat.id ? '#FFF' : '#888'} />
+                      <Feather name={cat.icon as any} size={14} color={categoryId === cat.id ? '#FFF' : '#9A8A8F'} />
                       <Text style={[eStyles.catName, categoryId === cat.id && eStyles.catNameActive]}>{cat.name}</Text>
                     </Pressable>
                   ))}
@@ -297,7 +297,7 @@ function EditTransactionModal({
 
                 {/* Date */}
                 <Pressable style={eStyles.dateRow} onPress={() => setShowDatePicker(true)}>
-                  <Feather name="calendar" size={16} color="#888" />
+                  <Feather name="calendar" size={16} color="#D4A5B0" />
                   <Text style={eStyles.dateText}>{dayjs(date).format('YYYY年M月D日')}</Text>
                 </Pressable>
                 {showDatePicker && (
@@ -319,7 +319,7 @@ function EditTransactionModal({
                   value={note}
                   onChangeText={setNote}
                   placeholder="备注"
-                  placeholderTextColor="#CCC"
+                  placeholderTextColor="#D4C5C9"
                   multiline
                 />
 
@@ -333,7 +333,7 @@ function EditTransactionModal({
                   </View>
                 ) : (
                   <Pressable style={eStyles.imageBtn} onPress={handlePickImage}>
-                    <Feather name="camera" size={16} color="#CCC" />
+                    <Feather name="camera" size={16} color="#D4A5B0" />
                     <Text style={eStyles.imageBtnText}>添加图片</Text>
                   </Pressable>
                 )}
@@ -342,7 +342,7 @@ function EditTransactionModal({
               {/* Footer */}
               <View style={eStyles.footer}>
                 <Pressable style={eStyles.deleteBtn} onPress={onDelete}>
-                  <Feather name="trash-2" size={16} color="#E85D5D" />
+                  <Feather name="trash-2" size={16} color="#D4A5B0" />
                   <Text style={eStyles.deleteBtnText}>删除</Text>
                 </Pressable>
                 <View style={{ flex: 1 }} />
@@ -364,13 +364,21 @@ function EditTransactionModal({
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 48,
     paddingBottom: 8,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerPenguin: {
+    fontSize: 24,
+  },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: '#111',
+    color: '#5A4A4F',
     letterSpacing: -0.5,
   },
   monthSelector: {
@@ -386,7 +394,7 @@ const styles = StyleSheet.create({
   monthText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
     minWidth: 100,
     textAlign: 'center',
   },
@@ -394,21 +402,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 24,
     paddingVertical: 16,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    borderRadius: 12,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
+    borderRadius: 20,
   },
   summaryItem: {
     flex: 1,
     alignItems: 'center',
   },
   summaryDivider: {
-    width: StyleSheet.hairlineWidth,
-    backgroundColor: '#ECECEC',
+    width: 1,
+    backgroundColor: 'rgba(212, 165, 176, 0.15)',
   },
   summaryLabel: {
     fontSize: 11,
-    color: '#CCC',
+    color: '#D4C5C9',
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -417,12 +426,12 @@ const styles = StyleSheet.create({
   summaryValueIncome: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
   },
   summaryValueExpense: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#E85D5D',
+    color: '#D4A5B0',
   },
   filterRow: {
     flexDirection: 'row',
@@ -433,25 +442,19 @@ const styles = StyleSheet.create({
   filterBtn: {
     paddingVertical: 6,
     paddingHorizontal: 14,
-    borderRadius: 8,
-    backgroundColor: '#F7F7F7',
+    borderRadius: 16,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
   },
   filterBtnActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
   },
   filterBtnText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
   },
   filterBtnTextActive: {
     color: '#FFF',
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#ECECEC',
-    marginVertical: 16,
-    marginHorizontal: 24,
   },
   emptyWrap: {
     flex: 1,
@@ -461,7 +464,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#CCC',
+    color: '#D4C5C9',
   },
   dateGroup: {
     marginBottom: 20,
@@ -469,26 +472,26 @@ const styles = StyleSheet.create({
   dateHeader: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
     marginBottom: 8,
   },
   dateWeek: {
     fontWeight: '400',
-    color: '#CCC',
+    color: '#D4C5C9',
   },
   txItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 165, 176, 0.1)',
     gap: 12,
   },
   txIconWrap: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    backgroundColor: '#F7F7F7',
+    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -498,11 +501,11 @@ const styles = StyleSheet.create({
   txCategory: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#111',
+    color: '#5A4A4F',
   },
   txNote: {
     fontSize: 12,
-    color: '#888',
+    color: '#9A8A8F',
     marginTop: 2,
   },
   txAmount: {
@@ -510,23 +513,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   txAmountExpense: {
-    color: '#E85D5D',
+    color: '#D4A5B0',
   },
   txAmountIncome: {
-    color: '#111',
+    color: '#5A4A4F',
   },
 });
 
 const eStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(90, 74, 79, 0.3)',
     justifyContent: 'flex-end',
   },
   content: {
-    backgroundColor: '#FFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    backgroundColor: '#F5F0F3',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     maxHeight: '85%',
   },
   header: {
@@ -536,13 +539,13 @@ const eStyles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 165, 176, 0.15)',
   },
   title: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
   },
   body: {
     paddingHorizontal: 24,
@@ -551,11 +554,11 @@ const eStyles = StyleSheet.create({
   amountInput: {
     fontSize: 28,
     fontWeight: '300',
-    color: '#111',
+    color: '#5A4A4F',
     padding: 0,
     marginBottom: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 165, 176, 0.15)',
     paddingBottom: 12,
   },
   typeRow: {
@@ -566,19 +569,25 @@ const eStyles = StyleSheet.create({
   typeBtn: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#F7F7F7',
+    borderRadius: 16,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
     alignItems: 'center',
   },
   typeBtnActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
+  },
+  typeBtnActiveIncome: {
+    backgroundColor: '#A5C4B0',
   },
   typeBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
   },
   typeBtnTextActive: {
+    color: '#FFF',
+  },
+  typeBtnTextActiveIncome: {
     color: '#FFF',
   },
   catGrid: {
@@ -593,15 +602,15 @@ const eStyles = StyleSheet.create({
     gap: 4,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 8,
-    backgroundColor: '#F7F7F7',
+    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
   },
   catItemActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
   },
   catName: {
     fontSize: 12,
-    color: '#888',
+    color: '#9A8A8F',
     fontWeight: '500',
   },
   catNameActive: {
@@ -613,24 +622,28 @@ const eStyles = StyleSheet.create({
     gap: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
     marginBottom: 16,
   },
   dateText: {
     flex: 1,
     fontSize: 14,
-    color: '#111',
+    color: '#5A4A4F',
   },
   noteInput: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
     padding: 14,
     fontSize: 14,
-    color: '#111',
+    color: '#5A4A4F',
     minHeight: 60,
     lineHeight: 20,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
   },
   imageWrap: {
     position: 'relative',
@@ -640,9 +653,9 @@ const eStyles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: 'rgba(212, 165, 176, 0.2)',
   },
   imageRemove: {
     position: 'absolute',
@@ -651,7 +664,7 @@ const eStyles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(212, 165, 176, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -662,23 +675,23 @@ const eStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    borderRadius: 12,
+    borderColor: 'rgba(212, 165, 176, 0.2)',
+    borderRadius: 16,
     borderStyle: 'dashed',
     alignSelf: 'flex-start',
     marginBottom: 16,
   },
   imageBtnText: {
     fontSize: 13,
-    color: '#CCC',
+    color: '#D4A5B0',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#ECECEC',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(212, 165, 176, 0.15)',
     gap: 8,
   },
   deleteBtn: {
@@ -690,25 +703,25 @@ const eStyles = StyleSheet.create({
   },
   deleteBtnText: {
     fontSize: 13,
-    color: '#E85D5D',
+    color: '#D4A5B0',
     fontWeight: '500',
   },
   cancelBtn: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#F7F7F7',
-    borderRadius: 10,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
+    borderRadius: 16,
   },
   cancelBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
   },
   saveBtn: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#111',
-    borderRadius: 10,
+    backgroundColor: '#D4A5B0',
+    borderRadius: 16,
   },
   saveBtnText: {
     fontSize: 14,

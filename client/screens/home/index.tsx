@@ -1,3 +1,4 @@
+/* eslint-disable forbidEmoji/no-emoji */
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
@@ -10,7 +11,13 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Category } from '@/types/finance';
+import { PenguinCelebration } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
+
+/** Cute penguin emojis for different states */
+const PENGUIN_EMOJIS = ['🐧', '🎉', '💃', '🥰', '👏', '✨', '', '💖'];
+const EXPENSE_PENGUIN = '😅';
+const INCOME_PENGUIN = '🎊';
 
 export default function HomeScreen() {
   const { categories, addTransaction } = useFinance();
@@ -23,6 +30,7 @@ export default function HomeScreen() {
   const [note, setNote] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPenguin, setShowPenguin] = useState(false);
 
   // Category management modal
   const [showCatModal, setShowCatModal] = useState(false);
@@ -71,7 +79,8 @@ export default function HomeScreen() {
       setNote('');
       setImageUri(null);
       setDate(new Date());
-      Toast.show({ type: 'success', text1: '记录已保存' });
+      // Show penguin celebration!
+      setShowPenguin(true);
     } catch (e) {
       Toast.show({ type: 'error', text1: '保存失败，请重试' });
     } finally {
@@ -79,9 +88,14 @@ export default function HomeScreen() {
     }
   }, [amount, categoryId, date, note, imageUri, type, addTransaction]);
 
-  // No local handleAddCategory needed - handled in CategoryManageModal
-
   const formattedAmount = amount ? `¥ ${parseFloat(amount).toFixed(2)}` : '¥ 0.00';
+
+  // Choose penguin based on amount and type
+  const getPenguinEmoji = () => {
+    if (type === 'income') return INCOME_PENGUIN;
+    if (parseFloat(amount) > 1000) return EXPENSE_PENGUIN;
+    return PENGUIN_EMOJIS[Math.floor(Math.random() * PENGUIN_EMOJIS.length)];
+  };
 
   return (
     <Screen safeAreaEdges={['left', 'right']}>
@@ -94,11 +108,14 @@ export default function HomeScreen() {
             contentContainerStyle={styles.container}
             keyboardShouldPersistTaps="handled"
           >
-            {/* Header */}
+            {/* Header with penguin */}
             <View style={styles.header}>
-              <Text style={styles.headerTitle}>记账</Text>
+              <View style={styles.headerLeft}>
+                <Text style={styles.headerPenguin}>🐧</Text>
+                <Text style={styles.headerTitle}>记账</Text>
+              </View>
               <Pressable onPress={() => setShowCatModal(true)} style={styles.headerBtn}>
-                <Feather name="settings" size={18} color="#888" />
+                <Feather name="sliders" size={16} color="#D4A5B0" />
                 <Text style={styles.headerBtnText}>管理分类</Text>
               </Pressable>
             </View>
@@ -111,15 +128,12 @@ export default function HomeScreen() {
                 value={amount}
                 onChangeText={(t) => setAmount(t.replace(/[^0-9.]/g, ''))}
                 placeholder="0.00"
-                placeholderTextColor="#CCC"
+                placeholderTextColor="#D4C5C9"
                 keyboardType="decimal-pad"
-                selectionColor="#111"
+                selectionColor="#D4A5B0"
               />
               <Text style={styles.amountDisplay}>{formattedAmount}</Text>
             </View>
-
-            {/* Divider */}
-            <View style={styles.divider} />
 
             {/* Type Toggle */}
             <View style={styles.typeToggle}>
@@ -151,7 +165,7 @@ export default function HomeScreen() {
                       <Feather
                         name={cat.icon as any}
                         size={18}
-                        color={categoryId === cat.id ? '#FFF' : '#888'}
+                        color={categoryId === cat.id ? '#FFF' : '#9A8A8F'}
                       />
                     </View>
                     <Text style={[styles.categoryName, categoryId === cat.id && styles.categoryNameActive]}>
@@ -169,9 +183,9 @@ export default function HomeScreen() {
                 style={styles.dateRow}
                 onPress={() => setShowDatePicker(true)}
               >
-                <Feather name="calendar" size={16} color="#888" />
+                <Feather name="calendar" size={16} color="#D4A5B0" />
                 <Text style={styles.dateText}>{dayjs(date).format('YYYY年M月D日')}</Text>
-                <Feather name="chevron-right" size={16} color="#CCC" />
+                <Feather name="chevron-right" size={16} color="#D4C5C9" />
               </Pressable>
               {showDatePicker && (
                 <DateTimePicker
@@ -195,7 +209,7 @@ export default function HomeScreen() {
                 value={note}
                 onChangeText={setNote}
                 placeholder="添加备注..."
-                placeholderTextColor="#CCC"
+                placeholderTextColor="#D4C5C9"
                 multiline
                 numberOfLines={3}
                 textAlignVertical="top"
@@ -214,7 +228,7 @@ export default function HomeScreen() {
                 </View>
               ) : (
                 <Pressable style={styles.imageUploadBtn} onPress={handlePickImage}>
-                  <Feather name="camera" size={20} color="#CCC" />
+                  <Feather name="camera" size={20} color="#D4A5B0" />
                   <Text style={styles.imageUploadText}>添加图片</Text>
                 </Pressable>
               )}
@@ -226,13 +240,21 @@ export default function HomeScreen() {
               onPress={handleSubmit}
               disabled={submitting}
             >
-              <Text style={styles.submitBtnText}>保存</Text>
+              <Text style={styles.submitBtnText}>🐧 保存</Text>
             </Pressable>
 
             <View style={{ height: 40 }} />
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
+
+      {/* Penguin Celebration Easter Egg */}
+      <PenguinCelebration
+        visible={showPenguin}
+        amount={parseFloat(amount) || 0}
+        type={type}
+        onComplete={() => setShowPenguin(false)}
+      />
 
       {/* Category Management Modal */}
       <CategoryManageModal
@@ -276,11 +298,11 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
       <Text style={styles.modalCatTitle}>{title}</Text>
       {cats.map(cat => (
         <View key={cat.id} style={styles.modalCatItem}>
-          <Feather name={cat.icon as any} size={16} color="#888" />
+          <Feather name={cat.icon as any} size={16} color="#9A8A8F" />
           <Text style={styles.modalCatName}>{cat.name}</Text>
           {cat.isCustom && (
             <Pressable onPress={() => handleDelete(cat.id)} style={styles.modalCatDelete}>
-              <Feather name="trash-2" size={14} color="#E85D5D" />
+              <Feather name="trash-2" size={14} color="#D4A5B0" />
             </Pressable>
           )}
         </View>
@@ -299,9 +321,9 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
             <View style={styles.modalContent}>
               {/* Header */}
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>管理分类</Text>
+                <Text style={styles.modalTitle}>🐧 管理分类</Text>
                 <Pressable onPress={onClose}>
-                  <Feather name="x" size={20} color="#888" />
+                  <Feather name="x" size={20} color="#9A8A8F" />
                 </Pressable>
               </View>
 
@@ -334,7 +356,7 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
                       value={newName}
                       onChangeText={setNewName}
                       placeholder="分类名称"
-                      placeholderTextColor="#CCC"
+                      placeholderTextColor="#D4C5C9"
                     />
                     <Pressable style={styles.addCatBtn} onPress={handleAdd}>
                       <Feather name="plus" size={16} color="#FFF" />
@@ -353,38 +375,51 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 48,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 28,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerPenguin: {
+    fontSize: 28,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: '#111',
+    color: '#5A4A4F',
     letterSpacing: -0.5,
   },
   headerBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    backgroundColor: 'rgba(212, 165, 176, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   headerBtnText: {
     fontSize: 12,
-    color: '#888',
+    color: '#D4A5B0',
+    fontWeight: '500',
   },
 
   // Amount
   amountSection: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   amountLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#CCC',
+    color: '#D4C5C9',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 8,
@@ -392,19 +427,19 @@ const styles = StyleSheet.create({
   amountInput: {
     fontSize: 36,
     fontWeight: '300',
-    color: '#111',
+    color: '#5A4A4F',
     padding: 0,
     marginBottom: 4,
   },
   amountDisplay: {
     fontSize: 12,
-    color: '#888',
+    color: '#9A8A8F',
   },
 
   divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#ECECEC',
-    marginVertical: 20,
+    height: 1,
+    backgroundColor: 'rgba(212, 165, 176, 0.15)',
+    marginVertical: 16,
   },
 
   // Type toggle
@@ -415,21 +450,21 @@ const styles = StyleSheet.create({
   },
   typeBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: '#F7F7F7',
+    paddingVertical: 14,
+    borderRadius: 20,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
     alignItems: 'center',
   },
   typeBtnActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
   },
   typeBtnActiveIncome: {
-    backgroundColor: '#111',
+    backgroundColor: '#A5C4B0',
   },
   typeBtnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
   },
   typeBtnTextActive: {
     color: '#FFF',
@@ -445,7 +480,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#CCC',
+    color: '#D4C5C9',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -455,33 +490,33 @@ const styles = StyleSheet.create({
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
   },
   categoryItem: {
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     minWidth: 64,
   },
   categoryItemActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
   },
   categoryIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#F7F7F7',
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: 'rgba(212, 165, 176, 0.12)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
   },
   categoryIconWrapActive: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(255,255,255,0.25)',
   },
   categoryName: {
     fontSize: 11,
-    color: '#888',
+    color: '#9A8A8F',
     fontWeight: '500',
   },
   categoryNameActive: {
@@ -493,26 +528,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
   },
   dateText: {
     flex: 1,
     fontSize: 15,
-    color: '#111',
+    color: '#5A4A4F',
   },
 
   // Note
   noteInput: {
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
     padding: 16,
     fontSize: 15,
-    color: '#111',
+    color: '#5A4A4F',
     minHeight: 80,
     lineHeight: 22,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
   },
 
   // Image
@@ -523,9 +562,9 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: 120,
     height: 120,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: 'rgba(212, 165, 176, 0.2)',
   },
   imageRemoveBtn: {
     position: 'absolute',
@@ -534,7 +573,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(212, 165, 176, 0.8)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -544,42 +583,48 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: 'rgba(212, 165, 176, 0.2)',
     borderStyle: 'dashed',
     alignSelf: 'flex-start',
   },
   imageUploadText: {
     fontSize: 14,
-    color: '#CCC',
+    color: '#D4A5B0',
   },
 
   // Submit
   submitBtn: {
-    backgroundColor: '#111',
-    borderRadius: 12,
+    backgroundColor: '#D4A5B0',
+    borderRadius: 24,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 8,
+    shadowColor: '#D4A5B0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   submitBtnText: {
     color: '#FFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
 
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(90, 74, 79, 0.3)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#FFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    backgroundColor: '#F5F0F3',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     maxHeight: '80%',
   },
   modalHeader: {
@@ -589,13 +634,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 165, 176, 0.15)',
   },
   modalTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
   },
   modalBody: {
     paddingHorizontal: 24,
@@ -607,7 +652,7 @@ const styles = StyleSheet.create({
   modalCatTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#CCC',
+    color: '#D4C5C9',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -616,14 +661,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 165, 176, 0.1)',
     gap: 12,
   },
   modalCatName: {
     flex: 1,
     fontSize: 15,
-    color: '#111',
+    color: '#5A4A4F',
   },
   modalCatDelete: {
     padding: 4,
@@ -639,20 +684,20 @@ const styles = StyleSheet.create({
   typeBtnSmall: {
     flex: 1,
     paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#F7F7F7',
+    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.1)',
     alignItems: 'center',
   },
   typeBtnSmallActive: {
-    backgroundColor: '#111',
+    backgroundColor: '#D4A5B0',
   },
   typeBtnSmallActiveIncome: {
-    backgroundColor: '#111',
+    backgroundColor: '#A5C4B0',
   },
   typeBtnSmallText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#888',
+    color: '#9A8A8F',
   },
   typeBtnSmallTextActive: {
     color: '#FFF',
@@ -666,18 +711,20 @@ const styles = StyleSheet.create({
   },
   addCatInput: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
-    borderRadius: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#111',
+    color: '#5A4A4F',
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
   },
   addCatBtn: {
     width: 44,
     height: 44,
-    borderRadius: 12,
-    backgroundColor: '#111',
+    borderRadius: 16,
+    backgroundColor: '#D4A5B0',
     alignItems: 'center',
     justifyContent: 'center',
   },

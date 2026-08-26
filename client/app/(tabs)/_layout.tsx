@@ -5,16 +5,16 @@ import { Feather } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const tabBarStyle = Platform.OS === 'web'
-    ? { backgroundColor: '#FFFFFF', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#ECECEC', height: 'auto' as any }
-    : { backgroundColor: '#FFFFFF', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#ECECEC' };
+    ? { backgroundColor: '#F5F0F3', borderTopWidth: 1, borderTopColor: 'rgba(212, 165, 176, 0.2)', height: 'auto' as any }
+    : { backgroundColor: '#F5F0F3', borderTopWidth: 1, borderTopColor: 'rgba(212, 165, 176, 0.2)' };
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle,
-        tabBarActiveTintColor: '#111111',
-        tabBarInactiveTintColor: '#CCCCCC',
+        tabBarActiveTintColor: '#D4A5B0',
+        tabBarInactiveTintColor: '#D4C5C9',
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '600',

@@ -14,8 +14,8 @@
   --field-border-width: 0px;
 
   /* Base radius */
-  --radius: 0.5rem;
-  --field-radius: calc(var(--radius) * 1.5);
+  --radius: 0.75rem;
+  --field-radius: calc(var(--radius) * 1.33);
 
   /* Opacity */
   --opacity-disabled: 0.5;
@@ -24,62 +24,59 @@
 @layer theme {
   :root {
     @variant light {
-      /* Base Colors */
-      --background: #fafafa;
-      --foreground: var(--eclipse);
+      /* Base Colors - 灰粉色系 */
+      --background: #F5F0F3;
+      --foreground: #5A4A4F;
 
       /* Surface: Used for non-overlay components (cards, accordions, disclosure groups) */
       --surface: var(--white);
-      --surface-foreground: var(--foreground);
+      --surface-foreground: #5A4A4F;
 
       /* Overlay: Used for floating/overlay components (dialogs, popovers, modals, menus) */
       --overlay: var(--white);
-      --overlay-foreground: var(--foreground);
+      --overlay-foreground: #5A4A4F;
 
-      --muted: oklch(0.5517 0.0138 285.94);
+      --muted: #9A8A8F;
 
-      --default: oklch(94% 0.001 286.375);
-      --default-foreground: var(--eclipse);
+      --default: #E8DFE3;
+      --default-foreground: #5A4A4F;
 
-      --accent: oklch(0.6204 0.195 253.83);
-      --accent-foreground: var(--snow);
+      --accent: #D4A5B0;
+      --accent-foreground: var(--white);
 
       /* Form Fields */
       --field-background: var(--white);
-      --field-foreground: oklch(0.2103 0.0059 285.89);
-      --field-placeholder: var(--muted);
-      --field-border: transparent; /* no border by default on form fields */
+      --field-foreground: #5A4A4F;
+      --field-placeholder: #9A8A8F;
+      --field-border: transparent;
 
       /* Status Colors */
-      --success: oklch(0.7329 0.1935 150.81);
-      --success-foreground: var(--eclipse);
+      --success: #A0C8B8;
+      --success-foreground: #5A4A4F;
 
-      --warning: oklch(0.7819 0.1585 72.33);
-      --warning-foreground: var(--eclipse);
+      --warning: #E8C8A0;
+      --warning-foreground: #5A4A4F;
 
-      --danger: oklch(0.6532 0.2328 25.74);
-      --danger-foreground: var(--snow);
+      --danger: #E8A0A0;
+      --danger-foreground: var(--white);
 
       /* Component Colors */
       --segment: var(--white);
-      --segment-foreground: var(--eclipse);
+      --segment-foreground: #5A4A4F;
 
       /* Misc Colors */
-      --border: oklch(90% 0.004 286.32);
-      --separator: oklch(74% 0.004 286.32);
-      --focus: var(--accent);
-      --link: var(--foreground);
+      --border: #E8DFE3;
+      --separator: #E8DFE3;
+      --focus: #D4A5B0;
+      --link: #5A4A4F;
 
-      /* Shadows */
+      /* Shadows - 柔和粉调阴影 */
       --surface-shadow:
-        0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
-        0 0 1px 0 rgba(0, 0, 0, 0.06);
+        0 4px 12px 0 rgba(212, 165, 176, 0.1), 0 2px 4px 0 rgba(212, 165, 176, 0.06);
       --overlay-shadow:
-        0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 -6px 12px 0 rgba(0, 0, 0, 0.02),
-        0 14px 28px 0 rgba(0, 0, 0, 0.06);
+        0 8px 24px 0 rgba(212, 165, 176, 0.12), 0 4px 8px 0 rgba(212, 165, 176, 0.08);
       --field-shadow:
-        0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
-        0 0 1px 0 rgba(0, 0, 0, 0.06);
+        0 2px 8px 0 rgba(212, 165, 176, 0.08);
     }
 
     @variant dark {

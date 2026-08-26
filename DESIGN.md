@@ -1,47 +1,61 @@
-# Design: Personal Finance App - Pure White Minimal
+# Design: 企鹅记账 - 可爱水彩风
 
-## Product Soul
-A quiet desk at dawn. Linen tablecloth, a single black pen, a thin notebook. Everything has its place, nothing competes for attention. The numbers speak for themselves.
+## 产品灵魂
+冬日午后，阳光透过窗户洒在书桌上。一只圆滚滚的小企鹅坐在账本旁边，每记一笔就开心地摇摇晃晃。温暖、治愈、让人忍不住想打开。
 
-## Visual Strategy
-- Photography: N/A (user-uploaded receipt photos only)
-- Graphics: Feather thin-line icons only, 1.5px stroke
-- No gradients, no shadows, no decorative elements
+## 配色方案（带灰度的粉）
 
-## Color Palette
-| Role | Value | Origin |
-|------|-------|--------|
-| Primary text | #111111 | Ink on paper |
-| Secondary text | #888888 | Pencil mark |
-| Tertiary text | #CCCCCC | Faded pencil |
-| Background | #FFFFFF | Clean paper |
-| Secondary bg | #F7F7F7 | Paper shadow |
-| Border | #ECECEC | Fold line |
-| Expense accent | #E85D5D | Red pen mark (only for expense amounts) |
-| Income accent | #2D2D2D | Black ink (subtle distinction) |
-| Success/positive | #3D9E5F | Green pen (balance positive) |
+| 角色 | 色值 | 说明 |
+|------|------|------|
+| 背景 | #F5F0F3 | 淡粉灰，像企鹅肚皮的颜色 |
+| 卡片 | #FFFFFF | 纯白，带柔和阴影 |
+| 主色 | #D4A5B0 | 灰粉，像企鹅脸颊的红晕 |
+| 强调 | #C9899A | 深粉，用于按钮和重点 |
+| 文字主 | #5A4A4F | 深粉灰，柔和不刺眼 |
+| 文字次 | #9A8A8F | 中粉灰，辅助信息 |
+| 边框 | #E8DFE3 | 浅粉灰，极细分割 |
+| 支出 | #E8A0A0 | 柔和红粉 |
+| 收入 | #A0C8B8 | 柔和绿 |
 
-## Typography
-- Titles: 28px, weight 700, letter-spacing -0.5
-- Body: 15px, weight 400, line-height 24
-- Caption: 12px, weight 500, color #888
-- Amount display: 36px, weight 300, monospace feel
+## 核心样式手法
 
-## Layout
-- Generous whitespace: 24-40px between sections
-- Padding: 24px horizontal
-- Cards: borderWidth 1, borderColor #ECECEC, borderRadius 12, NO shadow
-- Dividers: StyleSheet.hairlineWidth, color #ECECEC
+**圆角胶囊感**
+- 按钮：borderRadius 24，胶囊形状
+- 卡片：borderRadius 20，柔和阴影
+- 输入框：borderRadius 16
 
-## Interaction
-- Buttons: Black fill (#111) for primary, #F7F7F7 for secondary
-- Tab bar: White bg, hairline top border, Feather icons, active=#111 inactive=#CCC
-- Transitions: opacity fade only, 200ms, Easing.out
+**柔和阴影**
+```
+shadowColor: #D4A5B0
+shadowOffset: { width: 0, height: 4 }
+shadowOpacity: 0.1
+shadowRadius: 12
+```
 
-## Don'ts
-- No colored backgrounds
-- No shadows
-- No gradients
-- No rounded pills (use radius 12 max)
-- No emoji as icons
-- No colored buttons except black primary
+**企鹅彩蛋系统**
+- 保存成功：随机显示企鹅表情（开心/跳舞/害羞/鼓掌/撒花）
+- 大额支出（>1000）：企鹅流汗表情
+- 收入：企鹅撒花表情
+- 空状态：困惑企鹅挠头
+- 连续记账7天：解锁"勤劳企鹅"徽章
+
+## 图标策略
+- 分类图标：使用企鹅主题水彩图标（待用户提供单独文件）
+- 临时方案：使用 emoji 过渡
+- Tab 图标：使用圆润的线性图标
+
+## 字体
+- 标题：fontSize 24, fontWeight '700', color #5A4A4F
+- 正文：fontSize 15, fontWeight '400', color #5A4A4F
+- 辅助：fontSize 12, color #9A8A8F
+
+## 动效
+- 保存成功：企鹅弹跳入场 + 轻微摇晃
+- 页面切换：柔和淡入
+- 按钮点击：轻微缩放（0.95）
+
+## 禁忌
+- 不用纯黑（#000）
+- 不用锐利直角
+- 不用冷色调（蓝/紫）
+- 不用硬阴影

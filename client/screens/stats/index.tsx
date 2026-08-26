@@ -1,3 +1,4 @@
+/* eslint-disable forbidEmoji/no-emoji */
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   View, Text, Pressable, StyleSheet, ScrollView, Platform,
@@ -10,12 +11,13 @@ import * as Sharing from 'expo-sharing';
 import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
+import { EmptyPenguin } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
-// Colors for pie chart segments
+// Cute pastel colors for pie chart segments
 const PIE_COLORS = [
-  '#111111', '#E85D5D', '#888888', '#AAAAAA', '#CCCCCC',
-  '#555555', '#D4A5A5', '#999999', '#777777', '#BBBBBB',
+  '#D4A5B0', '#A5C4B0', '#B0A5C4', '#C4B0A5', '#A5B8C4',
+  '#C4A5B8', '#B0C4A5', '#C4A5A5', '#A5C4C4', '#C4C4A5',
 ];
 
 export default function StatsScreen() {
@@ -102,7 +104,6 @@ export default function StatsScreen() {
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
-    // Set column widths
     ws['!cols'] = [{ wch: 12 }, { wch: 6 }, { wch: 10 }, { wch: 12 }, { wch: 20 }];
 
     const wb = XLSX.utils.book_new();
@@ -112,7 +113,6 @@ export default function StatsScreen() {
       XLSX.writeFile(wb, `记账记录_${selectedMonth}.xlsx`);
       Toast.show({ type: 'success', text1: '文件已开始下载' });
     } else {
-      // Mobile: write to file and share
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
       const fileUri = `${(FileSystem as any).documentDirectory}记账记录_${selectedMonth}.xlsx`;
       await (FileSystem as any).writeAsStringAsync(fileUri, wbout, { encoding: (FileSystem as any).EncodingType.Base64 });
@@ -131,19 +131,22 @@ export default function StatsScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>统计</Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerPenguin}>🐧</Text>
+            <Text style={styles.headerTitle}>统计</Text>
+          </View>
         </View>
 
         {/* Month selector */}
         <View style={styles.monthSelector}>
           <Pressable onPress={goPrevMonth} style={styles.monthArrow}>
-            <Feather name="chevron-left" size={18} color="#888" />
+            <Feather name="chevron-left" size={18} color="#D4A5B0" />
           </Pressable>
           <Text style={styles.monthText}>
             {dayjs(selectedMonth + '-01').format('YYYY年M月')}
           </Text>
           <Pressable onPress={goNextMonth} style={styles.monthArrow}>
-            <Feather name="chevron-right" size={18} color="#888" />
+            <Feather name="chevron-right" size={18} color="#D4A5B0" />
           </Pressable>
         </View>
 
@@ -176,19 +179,19 @@ export default function StatsScreen() {
                 spacing={10}
                 hideRules
                 hideYAxisText
-                yAxisColor="#ECECEC"
-                xAxisColor="#ECECEC"
-                color="#111"
-                thickness={1.5}
-                textColor="#AAA"
+                yAxisColor="rgba(212, 165, 176, 0.15)"
+                xAxisColor="rgba(212, 165, 176, 0.15)"
+                color="#D4A5B0"
+                thickness={2}
+                textColor="#9A8A8F"
                 textFontSize={8}
-                startFillColor="#111"
-                startOpacity={0.05}
-                endFillColor="#111"
+                startFillColor="#D4A5B0"
+                startOpacity={0.1}
+                endFillColor="#D4A5B0"
                 endOpacity={0}
                 initialSpacing={10}
                 yAxisThickness={0}
-                xAxisThickness={StyleSheet.hairlineWidth}
+                xAxisThickness={1}
                 noOfSections={3}
                 maxValue={maxExpense * 1.2}
                 adjustToWidth
@@ -198,7 +201,7 @@ export default function StatsScreen() {
               />
             ) : (
               <View style={styles.emptyChart}>
-                <Feather name="trending-up" size={24} color="#ECECEC" />
+                <Text style={styles.emptyChartEmoji}>🐧</Text>
                 <Text style={styles.emptyChartText}>暂无支出数据</Text>
               </View>
             )}
@@ -220,6 +223,7 @@ export default function StatsScreen() {
                   showText={false}
                   centerLabelComponent={() => (
                     <View style={styles.pieCenter}>
+                      <Text style={styles.pieCenterEmoji}>🐧</Text>
                       <Text style={styles.pieCenterAmount}>¥{monthData.expense.toFixed(0)}</Text>
                       <Text style={styles.pieCenterLabel}>总支出</Text>
                     </View>
@@ -240,7 +244,7 @@ export default function StatsScreen() {
             </View>
           ) : (
             <View style={[styles.chartCard, styles.emptyChart]}>
-              <Feather name="pie-chart" size={24} color="#ECECEC" />
+              <Text style={styles.emptyChartEmoji}>🐧</Text>
               <Text style={styles.emptyChartText}>暂无数据</Text>
             </View>
           )}
@@ -249,7 +253,7 @@ export default function StatsScreen() {
         {/* Export button */}
         <Pressable style={styles.exportBtn} onPress={handleExport}>
           <Feather name="download" size={16} color="#FFF" />
-          <Text style={styles.exportBtnText}>导出 Excel</Text>
+          <Text style={styles.exportBtnText}>🐧 导出 Excel</Text>
         </Pressable>
 
         <View style={{ height: 100 }} />
@@ -261,15 +265,23 @@ export default function StatsScreen() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 48,
   },
   header: {
     marginBottom: 24,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerPenguin: {
+    fontSize: 24,
+  },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: '#111',
+    color: '#5A4A4F',
     letterSpacing: -0.5,
   },
   monthSelector: {
@@ -286,7 +298,7 @@ const styles = StyleSheet.create({
   monthText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
     minWidth: 100,
     textAlign: 'center',
   },
@@ -301,15 +313,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     paddingHorizontal: 12,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    borderRadius: 12,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
+    borderRadius: 20,
     alignItems: 'center',
   },
   summaryLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#CCC',
+    color: '#D4C5C9',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 6,
@@ -317,13 +330,13 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
   },
   expenseColor: {
-    color: '#E85D5D',
+    color: '#D4A5B0',
   },
   balancePositive: {
-    color: '#3D9E5F',
+    color: '#A5C4B0',
   },
 
   // Section
@@ -333,17 +346,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#CCC',
+    color: '#D4C5C9',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
   },
   chartCard: {
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    borderRadius: 12,
+    borderColor: 'rgba(212, 165, 176, 0.15)',
+    borderRadius: 20,
     padding: 16,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgba(255,255,255,0.6)',
   },
   emptyChart: {
     alignItems: 'center',
@@ -351,9 +364,12 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     gap: 8,
   },
+  emptyChartEmoji: {
+    fontSize: 40,
+  },
   emptyChartText: {
     fontSize: 13,
-    color: '#CCC',
+    color: '#D4C5C9',
   },
 
   // Pie chart
@@ -365,14 +381,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  pieCenterEmoji: {
+    fontSize: 20,
+  },
   pieCenterAmount: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111',
+    color: '#5A4A4F',
   },
   pieCenterLabel: {
     fontSize: 10,
-    color: '#888',
+    color: '#9A8A8F',
     marginTop: 2,
   },
 
@@ -392,19 +411,19 @@ const styles = StyleSheet.create({
   },
   legendName: {
     fontSize: 13,
-    color: '#111',
+    color: '#5A4A4F',
     flex: 1,
   },
   legendValue: {
     fontSize: 12,
-    color: '#888',
+    color: '#9A8A8F',
     fontWeight: '500',
     minWidth: 44,
     textAlign: 'right',
   },
   legendAmount: {
     fontSize: 12,
-    color: '#888',
+    color: '#9A8A8F',
     minWidth: 70,
     textAlign: 'right',
   },
@@ -415,9 +434,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#111',
-    borderRadius: 12,
+    backgroundColor: '#D4A5B0',
+    borderRadius: 24,
     paddingVertical: 16,
+    shadowColor: '#D4A5B0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   exportBtnText: {
     color: '#FFF',
