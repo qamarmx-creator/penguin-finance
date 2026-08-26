@@ -2,29 +2,56 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 
-// Import penguin icons
-const penguin01 = require('@/assets/penguins/penguin_01.png');
-const penguin02 = require('@/assets/penguins/penguin_02.png');
-const penguin03 = require('@/assets/penguins/penguin_03.png');
-const penguin04 = require('@/assets/penguins/penguin_04.png');
-const penguin05 = require('@/assets/penguins/penguin_05.png');
-const penguin06 = require('@/assets/penguins/penguin_06.png');
-const penguin07 = require('@/assets/penguins/penguin_07.png');
-const penguin08 = require('@/assets/penguins/penguin_08.png');
-const penguin09 = require('@/assets/penguins/penguin_09.png');
-const penguin10 = require('@/assets/penguins/penguin_10.png');
-const penguin11 = require('@/assets/penguins/penguin_11.png');
-const penguin12 = require('@/assets/penguins/penguin_12.png');
+// Import all 18 penguin images
+const penguin01 = require('@/assets/penguins/penguin_01.png'); // success_confetti - celebration
+const penguin02 = require('@/assets/penguins/penguin_02.png'); // network_error - tangled cables
+const penguin03 = require('@/assets/penguins/penguin_03.png'); // no_result - magnifying glass
+const penguin04 = require('@/assets/penguins/penguin_04.png'); // empty_box - empty state
+const penguin05 = require('@/assets/penguins/penguin_05.png'); // shy_peek - shy
+const penguin06 = require('@/assets/penguins/penguin_06.png'); // sad_cry - crying
+const penguin07 = require('@/assets/penguins/penguin_07.png'); // slide_belly - sliding happy
+const penguin08 = require('@/assets/penguins/penguin_08.png'); // thumbs_up - winking thumbs up
+const penguin09 = require('@/assets/penguins/penguin_09.png'); // hold_heart - holding heart
+const penguin10 = require('@/assets/penguins/penguin_10.png'); // jump_joy - jumping with stars
+const penguin11 = require('@/assets/penguins/penguin_11.png'); // notification_bell - bell
+const penguin12 = require('@/assets/penguins/penguin_12.png'); // tasks_checklist - checklist
+const penguin13 = require('@/assets/penguins/penguin_13.png'); // music_headphone - headphones
+const penguin14 = require('@/assets/penguins/penguin_14.png'); // diary_book - book
+const penguin15 = require('@/assets/penguins/penguin_15.png'); // camera_photo - camera
+const penguin16 = require('@/assets/penguins/penguin_16.png'); // calendar - calendar
+const penguin17 = require('@/assets/penguins/penguin_17.png'); // favorite_heart - heart with penguin
+const penguin18 = require('@/assets/penguins/penguin_18.png'); // search_snow - magnifying glass
 
-// All penguin icons for random selection
 export const PENGUIN_ICONS = [
   penguin01, penguin02, penguin03, penguin04,
   penguin05, penguin06, penguin07, penguin08,
   penguin09, penguin10, penguin11, penguin12,
+  penguin13, penguin14, penguin15, penguin16,
+  penguin17, penguin18,
 ];
 
-// Main penguin icon (the biggest one)
-export const MAIN_PENGUIN = penguin07;
+// Main celebration penguin (success with confetti)
+export const MAIN_PENGUIN = penguin01;
+// Empty state penguin (looking at empty box)
+export const EMPTY_PENGUIN = penguin04;
+// Search penguin (with magnifying glass)
+export const SEARCH_PENGUIN = penguin03;
+
+// Category-to-penguin mapping for deterministic icon assignment
+export const CATEGORY_PENGUIN_MAP: Record<string, number> = {
+  // Expense categories
+  expense_food: 7,        // slide_belly - happy eating
+  expense_transport: 8,   // thumbs_up - on the go
+  expense_shopping: 9,    // hold_heart - love shopping
+  expense_entertainment: 13, // music_headphone - entertainment
+  expense_medical: 6,     // sad_cry - medical bills hurt
+  expense_education: 14,  // diary_book - studying
+  expense_housing: 16,    // calendar - monthly rent
+  expense_other: 5,       // shy_peek - miscellaneous
+  // Income categories
+  income_salary: 10,      // jump_joy - got paid!
+  income_other: 17,       // favorite_heart - other income
+};
 
 // Celebration messages based on context
 const getCelebrationText = (type?: 'income' | 'expense', amount?: number) => {
@@ -55,7 +82,7 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
     }
 
     setCelebrationText(getCelebrationText(type, amount));
-    // Random penguin for celebration
+    // Random penguin for celebration (use indices 0-17)
     setRandomPenguin(PENGUIN_ICONS[Math.floor(Math.random() * PENGUIN_ICONS.length)]);
 
     // Animate in
@@ -113,7 +140,7 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
 export function EmptyPenguin({ text = '还没有记录哦' }: { text?: string }) {
   return (
     <View style={styles.emptyContainer}>
-      <Image source={MAIN_PENGUIN} style={styles.emptyPenguinImage} resizeMode="contain" />
+      <Image source={EMPTY_PENGUIN} style={styles.emptyPenguinImage} resizeMode="contain" />
       <Text style={styles.emptyText}>{text}</Text>
     </View>
   );
@@ -131,11 +158,12 @@ export function PenguinIcon({ size = 32, index }: { size?: number; index?: numbe
   );
 }
 
-/** Category penguin icon - use different penguins for different categories */
+/** Category penguin icon - uses explicit mapping for each category */
 export function CategoryPenguinIcon({ categoryId, size = 24 }: { categoryId: string; size?: number }) {
-  // Use category ID to deterministically select a penguin
-  const hash = categoryId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const source = PENGUIN_ICONS[hash % PENGUIN_ICONS.length];
+  const penguinIndex = CATEGORY_PENGUIN_MAP[categoryId];
+  const source = penguinIndex !== undefined 
+    ? PENGUIN_ICONS[penguinIndex] 
+    : PENGUIN_ICONS[0]; // fallback to first penguin
   return (
     <Image 
       source={source} 

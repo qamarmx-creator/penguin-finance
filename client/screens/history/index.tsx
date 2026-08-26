@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Transaction, type Category } from '@/types/finance';
-import { EmptyPenguin, PenguinIcon, CategoryPenguinIcon } from '@/components/PenguinCelebration';
+import { EmptyPenguin, PenguinIcon, CategoryPenguinIcon, SEARCH_PENGUIN } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 export default function HistoryScreen() {
@@ -20,6 +20,8 @@ export default function HistoryScreen() {
 
   const [selectedMonth, setSelectedMonth] = useState(dayjs().format('YYYY-MM'));
   const [typeFilter, setTypeFilter] = useState<'all' | 'expense' | 'income'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -29,9 +31,16 @@ export default function HistoryScreen() {
       const txMonth = tx.date.substring(0, 7);
       if (txMonth !== selectedMonth) return false;
       if (typeFilter !== 'all' && tx.type !== typeFilter) return false;
+      // Search filter
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const categoryName = categories.find(c => c.id === tx.categoryId)?.name?.toLowerCase() ?? '';
+        const note = (tx.note || '').toLowerCase();
+        if (!categoryName.includes(query) && !note.includes(query)) return false;
+      }
       return true;
     }).sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
-  }, [transactions, selectedMonth, typeFilter]);
+  }, [transactions, selectedMonth, typeFilter, searchQuery, categories]);
 
   // Group by date
   const grouped = useMemo(() => {
@@ -48,7 +57,6 @@ export default function HistoryScreen() {
   }, [filtered]);
 
   const getCategoryName = (id: string) => categories.find(c => c.id === id)?.name ?? '未知';
-  const getCategoryIcon = (id: string) => categories.find(c => c.id === id)?.icon ?? 'help-circle';
 
   // Month navigation
   const goPrevMonth = () => {
@@ -92,7 +100,31 @@ export default function HistoryScreen() {
           <PenguinIcon size={32} />
           <Text style={styles.headerTitle}>明细</Text>
         </View>
+        <Pressable onPress={() => setShowSearch(!showSearch)} style={styles.searchToggleBtn}>
+          <Feather name="search" size={18} color="#D4A5B0" />
+        </Pressable>
       </View>
+
+      {/* Search bar */}
+      {showSearch && (
+        <View style={styles.searchBar}>
+          <Feather name="search" size={16} color="#D4C5C9" />
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="搜索分类或备注..."
+            placeholderTextColor="#D4C5C9"
+            autoFocus
+            selectionColor="#D4A5B0"
+          />
+          {searchQuery ? (
+            <Pressable onPress={() => setSearchQuery('')}>
+              <Feather name="x" size={16} color="#D4C5C9" />
+            </Pressable>
+          ) : null}
+        </View>
+      )}
 
       {/* Month selector */}
       <View style={styles.monthSelector}>
@@ -137,7 +169,15 @@ export default function HistoryScreen() {
 
       {/* List */}
       {grouped.length === 0 ? (
-        <EmptyPenguin text="这个月还没有记录哦~" />
+        searchQuery.trim() ? (
+          <View style={styles.emptyWrap}>
+            <Image source={SEARCH_PENGUIN} style={styles.searchPenguinImage} resizeMode="contain" />
+            <Text style={styles.emptyText}>没有找到相关记录</Text>
+            <Text style={styles.emptySubText}>试试其他关键词吧~</Text>
+          </View>
+        ) : (
+          <EmptyPenguin text="这个月还没有记录哦~" />
+        )
       ) : (
         <FlatList
           data={grouped}
@@ -363,6 +403,9 @@ function EditTransactionModal({
 
 const styles = StyleSheet.create({
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 48,
     paddingBottom: 8,
@@ -377,6 +420,33 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#5A4A4F',
     letterSpacing: -0.5,
+  },
+  searchToggleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(212, 165, 176, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 24,
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(212, 165, 176, 0.08)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 165, 176, 0.2)',
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#5A4A4F',
+    padding: 0,
   },
   monthSelector: {
     flexDirection: 'row',
@@ -457,10 +527,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: 8,
+    paddingVertical: 60,
+  },
+  searchPenguinImage: {
+    width: 100,
+    height: 100,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: 15,
+    color: '#9A8A8F',
+    fontWeight: '500',
+  },
+  emptySubText: {
+    fontSize: 13,
     color: '#D4C5C9',
   },
   dateGroup: {
