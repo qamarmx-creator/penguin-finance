@@ -21,13 +21,14 @@ const penguin15 = require('@/assets/penguins/penguin_15.png'); // camera_photo -
 const penguin16 = require('@/assets/penguins/penguin_16.png'); // calendar - calendar
 const penguin17 = require('@/assets/penguins/penguin_17.png'); // favorite_heart - heart with penguin
 const penguin18 = require('@/assets/penguins/penguin_18.png'); // search_snow - magnifying glass
+const penguin19 = require('@/assets/penguins/penguin_19.png'); // jump_joy duplicate - "真乖" celebration
 
 export const PENGUIN_ICONS = [
   penguin01, penguin02, penguin03, penguin04,
   penguin05, penguin06, penguin07, penguin08,
   penguin09, penguin10, penguin11, penguin12,
   penguin13, penguin14, penguin15, penguin16,
-  penguin17, penguin18,
+  penguin17, penguin18, penguin19,
 ];
 
 // Main celebration penguin (success with confetti)
@@ -60,7 +61,7 @@ export const CATEGORY_PENGUIN_MAP: Record<string, number> = {
 const getCelebrationText = (type?: 'income' | 'expense', amount?: number) => {
   if (type === 'income') return '赚钱啦!';
   if (amount && amount > 1000) return '花多了...';
-  const texts = ['记好了!', '太棒了!', '真乖!', '厉害!', '完成!'];
+  const texts = ['记好了!', '太棒了!', '真乖!', '真乖!', '厉害!', '完成!'];
   return texts[Math.floor(Math.random() * texts.length)];
 };
 
@@ -84,9 +85,14 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
       return;
     }
 
-    setCelebrationText(getCelebrationText(type, amount));
-    // Random penguin for celebration (use indices 0-17)
-    setRandomPenguin(PENGUIN_ICONS[Math.floor(Math.random() * PENGUIN_ICONS.length)]);
+    const text = getCelebrationText(type, amount);
+    setCelebrationText(text);
+    // Use penguin_19 (jump_joy) for "真乖!" celebration, otherwise random
+    if (text === '真乖!') {
+      setRandomPenguin(penguin19);
+    } else {
+      setRandomPenguin(PENGUIN_ICONS[Math.floor(Math.random() * PENGUIN_ICONS.length)]);
+    }
 
     // Animate in
     Animated.parallel([
