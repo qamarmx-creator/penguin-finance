@@ -11,7 +11,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Category } from '@/types/finance';
-import { PenguinCelebration } from '@/components/PenguinCelebration';
+import { PenguinCelebration, PenguinIcon } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 /** Cute penguin emojis for different states */
@@ -111,7 +111,7 @@ export default function HomeScreen() {
             {/* Header with penguin */}
             <View style={styles.header}>
               <View style={styles.headerLeft}>
-                <Text style={styles.headerPenguin}>🐧</Text>
+                <PenguinIcon size={36} />
                 <Text style={styles.headerTitle}>记账</Text>
               </View>
               <Pressable onPress={() => setShowCatModal(true)} style={styles.headerBtn}>
@@ -240,7 +240,7 @@ export default function HomeScreen() {
               onPress={handleSubmit}
               disabled={submitting}
             >
-              <Text style={styles.submitBtnText}>🐧 保存</Text>
+              <Text style={styles.submitBtnText}>保存</Text>
             </Pressable>
 
             <View style={{ height: 40 }} />
@@ -321,7 +321,7 @@ function CategoryManageModal({ visible, onClose }: { visible: boolean; onClose: 
             <View style={styles.modalContent}>
               {/* Header */}
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>🐧 管理分类</Text>
+                <Text style={styles.modalTitle}>管理分类</Text>
                 <Pressable onPress={onClose}>
                   <Feather name="x" size={20} color="#9A8A8F" />
                 </Pressable>
@@ -387,9 +387,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  headerPenguin: {
-    fontSize: 28,
   },
   headerTitle: {
     fontSize: 26,

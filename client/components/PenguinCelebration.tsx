@@ -1,24 +1,10 @@
-/* eslint-disable forbidEmoji/no-emoji, react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 
-/** Cute penguin emojis for saving success */
-const PENGUIN_EMOJIS = [
-  { emoji: '🐧', name: '记好了!' },
-  { emoji: '🎉', name: '撒花!' },
-  { emoji: '💃', name: '太棒了!' },
-  { emoji: '🥰', name: '真乖!' },
-  { emoji: '👏', name: '厉害!' },
-  { emoji: '✨', name: '闪闪!' },
-  { emoji: '', name: '星星!' },
-  { emoji: '💖', name: '爱你!' },
-];
-
-/** Expense penguin for large amounts */
-const EXPENSE_PENGUIN = { emoji: '😅', name: '花多了...' };
-
-/** Income penguin */
-const INCOME_PENGUIN = { emoji: '🎊', name: '赚钱啦!' };
+// Penguin image assets
+const penguinIcons = require('@/assets/penguin_icons.png');
+const penguinPreview = require('@/assets/penguin_preview.jpg');
 
 interface PenguinCelebrationProps {
   visible: boolean;
@@ -27,8 +13,16 @@ interface PenguinCelebrationProps {
   onComplete?: () => void;
 }
 
+/** Celebration messages based on context */
+const getcelebrationText = (type?: 'income' | 'expense', amount?: number) => {
+  if (type === 'income') return '赚钱啦!';
+  if (amount && amount > 1000) return '花多了...';
+  const texts = ['记好了!', '太棒了!', '真乖!', '厉害!', '完成!'];
+  return texts[Math.floor(Math.random() * texts.length)];
+};
+
 export function PenguinCelebration({ visible, amount, type, onComplete }: PenguinCelebrationProps) {
-  const [selectedPenguin, setSelectedPenguin] = useState(PENGUIN_EMOJIS[0]);
+  const [celebrationText, setCelebrationText] = useState('记好了!');
   const [scaleAnim] = useState(() => new Animated.Value(0));
   const [opacityAnim] = useState(() => new Animated.Value(0));
 
@@ -39,17 +33,7 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
       return;
     }
 
-    // Choose penguin based on context
-    let penguin;
-    if (type === 'income') {
-      penguin = INCOME_PENGUIN;
-    } else if (amount && amount > 1000) {
-      penguin = EXPENSE_PENGUIN;
-    } else {
-      penguin = PENGUIN_EMOJIS[Math.floor(Math.random() * PENGUIN_EMOJIS.length)];
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedPenguin(penguin);
+    setCelebrationText(getcelebrationText(type, amount));
 
     // Animate in
     Animated.parallel([
@@ -66,7 +50,7 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
       }),
     ]).start();
 
-    // Auto dismiss after 1.5s
+    // Auto dismiss after 1.8s
     const timer = setTimeout(() => {
       Animated.parallel([
         Animated.timing(scaleAnim, {
@@ -80,7 +64,7 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
           useNativeDriver: true,
         }),
       ]).start(() => onComplete?.());
-    }, 1500);
+    }, 1800);
 
     return () => clearTimeout(timer);
   }, [visible]);
@@ -95,20 +79,31 @@ export function PenguinCelebration({ visible, amount, type, onComplete }: Pengui
   return (
     <View style={styles.overlay} pointerEvents="none">
       <Animated.View style={[styles.container, animatedStyle]}>
-        <Text style={styles.emoji}>{selectedPenguin.emoji}</Text>
-        <Text style={styles.text}>{selectedPenguin.name}</Text>
+        <Image source={penguinPreview} style={styles.penguinImage} resizeMode="contain" />
+        <Text style={styles.text}>{celebrationText}</Text>
       </Animated.View>
     </View>
   );
 }
 
-/** Empty state penguin */
+/** Empty state penguin with real image */
 export function EmptyPenguin({ text = '还没有记录哦' }: { text?: string }) {
   return (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyEmoji}>🐧</Text>
+      <Image source={penguinIcons} style={styles.emptyPenguinImage} resizeMode="contain" />
       <Text style={styles.emptyText}>{text}</Text>
     </View>
+  );
+}
+
+/** Small penguin icon for headers */
+export function PenguinIcon({ size = 32 }: { size?: number }) {
+  return (
+    <Image 
+      source={penguinPreview} 
+      style={{ width: size, height: size }} 
+      resizeMode="contain" 
+    />
   );
 }
 
@@ -121,18 +116,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(245, 240, 243, 0.85)',
+    backgroundColor: 'rgba(245, 240, 243, 0.9)',
     zIndex: 1000,
   },
   container: {
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
   },
-  emoji: {
-    fontSize: 72,
+  penguinImage: {
+    width: 120,
+    height: 120,
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#5A4A4F',
   },
@@ -141,10 +137,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
-    gap: 12,
+    gap: 16,
   },
-  emptyEmoji: {
-    fontSize: 56,
+  emptyPenguinImage: {
+    width: 100,
+    height: 100,
   },
   emptyText: {
     fontSize: 15,

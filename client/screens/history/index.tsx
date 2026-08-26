@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
 import { type Transaction, type Category } from '@/types/finance';
-import { EmptyPenguin } from '@/components/PenguinCelebration';
+import { EmptyPenguin, PenguinIcon } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 export default function HistoryScreen() {
@@ -89,7 +89,7 @@ export default function HistoryScreen() {
     <Screen safeAreaEdges={['left', 'right']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.headerPenguin}>🐧</Text>
+          <PenguinIcon size={32} />
           <Text style={styles.headerTitle}>明细</Text>
         </View>
       </View>
@@ -248,7 +248,7 @@ function EditTransactionModal({
             <View style={eStyles.content}>
               {/* Header */}
               <View style={eStyles.header}>
-                <Text style={eStyles.title}>🐧 编辑记录</Text>
+                <Text style={eStyles.title}>编辑记录</Text>
                 <Pressable onPress={onClose}>
                   <Feather name="x" size={20} color="#9A8A8F" />
                 </Pressable>
@@ -371,9 +371,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  headerPenguin: {
-    fontSize: 24,
   },
   headerTitle: {
     fontSize: 26,

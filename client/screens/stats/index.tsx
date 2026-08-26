@@ -11,7 +11,7 @@ import * as Sharing from 'expo-sharing';
 import Toast from 'react-native-toast-message';
 import { Screen } from '@/components/Screen';
 import { useFinance } from '@/contexts/FinanceContext';
-import { EmptyPenguin } from '@/components/PenguinCelebration';
+import { EmptyPenguin, PenguinIcon } from '@/components/PenguinCelebration';
 import dayjs from 'dayjs';
 
 // Cute pastel colors for pie chart segments
@@ -132,7 +132,7 @@ export default function StatsScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerPenguin}>🐧</Text>
+            <PenguinIcon size={32} />
             <Text style={styles.headerTitle}>统计</Text>
           </View>
         </View>
@@ -201,7 +201,7 @@ export default function StatsScreen() {
               />
             ) : (
               <View style={styles.emptyChart}>
-                <Text style={styles.emptyChartEmoji}>🐧</Text>
+                <PenguinIcon size={48} />
                 <Text style={styles.emptyChartText}>暂无支出数据</Text>
               </View>
             )}
@@ -223,7 +223,7 @@ export default function StatsScreen() {
                   showText={false}
                   centerLabelComponent={() => (
                     <View style={styles.pieCenter}>
-                      <Text style={styles.pieCenterEmoji}>🐧</Text>
+                      <PenguinIcon size={28} />
                       <Text style={styles.pieCenterAmount}>¥{monthData.expense.toFixed(0)}</Text>
                       <Text style={styles.pieCenterLabel}>总支出</Text>
                     </View>
@@ -244,7 +244,7 @@ export default function StatsScreen() {
             </View>
           ) : (
             <View style={[styles.chartCard, styles.emptyChart]}>
-              <Text style={styles.emptyChartEmoji}>🐧</Text>
+              <PenguinIcon size={48} />
               <Text style={styles.emptyChartText}>暂无数据</Text>
             </View>
           )}
@@ -253,7 +253,7 @@ export default function StatsScreen() {
         {/* Export button */}
         <Pressable style={styles.exportBtn} onPress={handleExport}>
           <Feather name="download" size={16} color="#FFF" />
-          <Text style={styles.exportBtnText}>🐧 导出 Excel</Text>
+          <Text style={styles.exportBtnText}>导出 Excel</Text>
         </Pressable>
 
         <View style={{ height: 100 }} />
@@ -274,9 +274,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  headerPenguin: {
-    fontSize: 24,
   },
   headerTitle: {
     fontSize: 26,
@@ -362,10 +359,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 40,
-    gap: 8,
-  },
-  emptyChartEmoji: {
-    fontSize: 40,
+    gap: 12,
   },
   emptyChartText: {
     fontSize: 13,
@@ -380,9 +374,6 @@ const styles = StyleSheet.create({
   pieCenter: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pieCenterEmoji: {
-    fontSize: 20,
   },
   pieCenterAmount: {
     fontSize: 16,
